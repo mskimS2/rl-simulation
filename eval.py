@@ -2,8 +2,9 @@ import torch
 import argparse
 
 from env import create_env
-from train import DQN, config
-
+from models.dqn import DQN
+from models.ppo import PPO
+from config import  dqn_pong_config, ppo_pong_config
 
 def eval_agent_with_rendering(config, env, agent):
     score_sum = 0
@@ -15,8 +16,7 @@ def eval_agent_with_rendering(config, env, agent):
         done = False
         score = 0
         while not done:
-            with torch.no_grad():
-                a = agent.get_argmax_action(s)
+            _, a = agent.action(s)
 
             s_next, r, done, info = env.step(a)
             env.render()
@@ -47,12 +47,12 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    config.num_eval_episode = args.num_eval
-    env = create_env(config)
-    agent = DQN(env, config)
+    ppo_pong_config.num_eval_episode = args.num_eval
+    env = create_env(ppo_pong_config)
+    agent = PPO(env, ppo_pong_config)
     
     if args.model_path:
         state_dict = torch.load(args.model_path)
         agent.load_state_dict(state_dict)
 
-    eval_agent_with_rendering(config, env, agent)
+    eval_agent_with_rendering(ppo_pong_config, env, agent)
