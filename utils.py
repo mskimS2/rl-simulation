@@ -1,5 +1,6 @@
 import torch
 import random
+import numpy as np
 from collections import deque
 
 
@@ -58,3 +59,13 @@ def eval_agent(config, env, agent):
     score_avg = score_sum / config.num_eval_episode
     step_count_avg = step_count_sum / config.num_eval_episode
     return score_avg, step_count_avg
+
+
+def set_randomness(random_seed: int = 2023):
+    random.seed(random_seed)
+    np.random.seed(random_seed)
+    torch.manual_seed(random_seed)
+    torch.cuda.manual_seed(random_seed)
+    torch.cuda.manual_seed_all(random_seed) 
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
