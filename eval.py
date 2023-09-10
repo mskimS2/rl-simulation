@@ -1,7 +1,7 @@
 import torch
 import argparse
 
-from env import create_env
+from envs.env import create_env
 from models.dqn import DQN
 from models.ppo import PPO
 from config import  dqn_pong_config, ppo_pong_config

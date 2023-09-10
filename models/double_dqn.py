@@ -3,9 +3,9 @@ import numpy as np
 from torch import nn
 from utils import ReplayMemory
 
-class DQN(nn.Module):
+class DoubleDQN(nn.Module):
     def __init__(self, env, config):
-        super().__init__()
+        super(DoubleDQN, self).__init__()
         self.config = config
         self.replay_memory = ReplayMemory(self.config)
 
@@ -72,11 +72,14 @@ class DQN(nn.Module):
         dones_tensor = torch.from_numpy(dones_array).float()  # (n_batch)
 
         Qs = self.forward(states_tensor)  # (n_batch, n_action)
-        next_Qs = self.forward_target_network(next_states_tensor)  # (n_batch, n_action)
+        with torch.no_grad():
+            next_Qs = self.forward(next_states_tensor)  # (n_batch, n_action)
+        next_target_Qs = self.forward_target_network(next_states_tensor)  # (n_batch, n_action)
 
-        # index dimension should be the same as the source tensor
         chosen_Q = Qs.gather(dim=-1, index=actions_tensor.reshape(-1, 1)).reshape(-1)  # (n_batch, 1) -> (n_batch)
-        target_Q = rewards_tensor + (1 - dones_tensor) * self.config.gamma * next_Qs.max(dim=-1).values
+        next_argmax_actions = next_Qs.argmax(dim=-1).reshape(-1, 1)
+        next_target_max_Q = next_target_Qs.gather(dim=-1, index=next_argmax_actions).reshape(-1)
+        target_Q = rewards_tensor + (1 - dones_tensor) * self.config.gamma * next_target_max_Q
         
         criterion = nn.SmoothL1Loss()
         loss = criterion(chosen_Q, target_Q)
