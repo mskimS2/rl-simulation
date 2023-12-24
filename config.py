@@ -1,3 +1,5 @@
+import torch
+
 class AttrDict(dict):
     __setattr__ = dict.__setitem__
 
@@ -63,4 +65,17 @@ ppo_pong_config = AttrDict(
     hidden_size=128,
     train_env_steps=1000000,
     num_eval_episode=100,
+)
+
+ddpg_pendulum_config = AttrDict(
+    lr_actor=0.005,
+    lr_critic=0.001,
+    gamma=0.99,
+    batch_size=256,
+    memory_size=50000,
+    tau=0.001, # polyak parameter for soft target update
+    sampling_only_until=2000,
+    device="cuda" if torch.cuda.is_available() else "cpu",
+    total_eps=200,
+    print_every=10,
 )
