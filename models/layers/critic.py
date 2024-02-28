@@ -14,11 +14,11 @@ class Critic(nn.Module):
         state_encoder_hidden_act: str = "ReLU",
         state_encoder_out_act: str = "ReLU",
         
-        action_encoder_input_dim: int = 1,
-        action_encoder_output_dim: int = 64,
-        action_encoder_hidden_dims: List[int] = [],
-        action_encoder_hidden_act: str = "ReLU",
-        action_encoder_out_act: str = "ReLU",
+        actor_encoder_input_dim: int = 1,
+        actor_encoder_output_dim: int = 64,
+        actor_encoder_hidden_dims: List[int] = [],
+        actor_encoder_hidden_act: str = "ReLU",
+        actor_encoder_out_act: str = "ReLU",
         
         q_estimator_input_dim: int = 128,
         q_estimator_output_dim: int = 1,
@@ -36,11 +36,11 @@ class Critic(nn.Module):
         )
         
         self.action_encoder = MLP(
-            input_dim=action_encoder_input_dim,
-            output_dim=action_encoder_output_dim,
-            hidden_dims=action_encoder_hidden_dims,
-            hidden_act=action_encoder_hidden_act,
-            out_act=action_encoder_out_act,
+            input_dim=actor_encoder_input_dim,
+            output_dim=actor_encoder_output_dim,
+            hidden_dims=actor_encoder_hidden_dims,
+            hidden_act=actor_encoder_hidden_act,
+            out_act=actor_encoder_out_act,
         )
         
         self.q_estimator = MLP(
